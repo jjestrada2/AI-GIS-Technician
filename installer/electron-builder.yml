@@ -1,0 +1,64 @@
+appId: ai.gistechnician.installer
+productName: GISTechnician Installer
+copyright: "Copyright © 2026 GISTechnician"
+
+directories:
+  output: dist
+  buildResources: assets
+
+files:
+  - src/**/*
+  - "!node_modules/**"
+
+mac:
+  category: public.app-category.utilities
+  target:
+    - target: dmg
+      arch: arm64
+    - target: dmg
+      arch: x64
+  darkModeSupport: true
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: assets/entitlements.mac.plist
+  entitlementsInherit: assets/entitlements.mac.plist
+
+dmg:
+  title: "GISTechnician Installer ${version}"
+  artifactName: "GISTechnician-Installer-${version}-${arch}.dmg"
+  window:
+    width: 540
+    height: 380
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+
+win:
+  target:
+    - target: nsis
+      arch: x64
+  artifactName: "GISTechnician-Installer-Setup-${version}.exe"
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: "GISTechnician Installer"
+  deleteAppDataOnUninstall: false
+
+linux:
+  target:
+    - target: AppImage
+      arch: x64
+  category: Utility
+  artifactName: "GISTechnician-Installer-${version}.AppImage"
+
+publish:
+  provider: github
+  # owner and repo are read automatically from package.json "repository.url"
+  # To change the target repo, update the "repository" field in package.json only.

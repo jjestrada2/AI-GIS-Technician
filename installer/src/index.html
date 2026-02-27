@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <title>GISTechnician Installer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="app">
+    <div class="titlebar">GISTechnician Installer</div>
+
+    <div class="content">
+      <!-- Welcome Screen -->
+      <div id="screen-welcome" class="screen active">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+          </svg>
+        </div>
+        <h1 class="welcome-title">Install GISTechnician</h1>
+        <p class="welcome-subtitle">
+          The open-source AI gateway that connects your favorite AI models to any messaging platform.
+          This installer will set up GISTechnician on your system.
+        </p>
+        <div id="wsl-notice" class="wsl-notice hidden">
+          <h3>Windows Detected</h3>
+          <p>
+            GISTechnician works best under WSL2 on Windows.
+            If you don't have WSL2 installed, please set it up first via
+            <a href="https://learn.microsoft.com/en-us/windows/wsl/install" target="_blank">Microsoft's guide</a>.
+            The installer will attempt to run commands through your default environment.
+          </p>
+        </div>
+        <button id="btn-begin" class="btn btn-primary">Begin Installation</button>
+        <p class="version-info">Requires Node.js 22+</p>
+      </div>
+
+      <!-- Progress Screen -->
+      <div id="screen-progress" class="screen">
+        <div class="progress-container">
+          <h2 class="progress-header">Installing GISTechnician...</h2>
+
+          <div class="steps">
+            <div class="step pending" data-step="check-node">
+              <div class="step-icon"><span>1</span></div>
+              <span class="step-label">Checking Node.js</span>
+            </div>
+            <div class="step pending" data-step="install">
+              <div class="step-icon"><span>2</span></div>
+              <span class="step-label">Installing GISTechnician</span>
+            </div>
+            <div class="step pending" data-step="onboard">
+              <div class="step-icon"><span>3</span></div>
+              <span class="step-label">Running Setup</span>
+            </div>
+            <div class="step pending" data-step="verify">
+              <div class="step-icon"><span>4</span></div>
+              <span class="step-label">Verifying Installation</span>
+            </div>
+          </div>
+
+          <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Screen -->
+      <div id="screen-success" class="screen">
+        <div class="result-icon success">&#10003;</div>
+        <h2 class="result-title">Installation Complete!</h2>
+        <p class="result-subtitle">
+          GISTechnician has been installed and configured successfully.
+          You can now launch the gateway or close this installer.
+        </p>
+        <div class="btn-group">
+          <button id="btn-launch" class="btn btn-primary">Launch GISTechnician</button>
+          <button id="btn-close-success" class="btn btn-secondary">Close</button>
+        </div>
+      </div>
+
+      <!-- Error Screen -->
+      <div id="screen-error" class="screen">
+        <div class="result-icon error">&#10007;</div>
+        <h2 class="result-title">Installation Failed</h2>
+        <p id="error-message" class="result-subtitle"></p>
+        <div class="btn-group">
+          <button id="btn-retry" class="btn btn-primary">Retry</button>
+          <button id="btn-close-error" class="btn btn-secondary">Quit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+
+</html>

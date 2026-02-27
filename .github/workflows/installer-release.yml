@@ -1,0 +1,127 @@
+name: Build & Release OpenClaw Installer
+
+on:
+  push:
+    tags:
+      - 'installer-v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g. installer-v1.0.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          name: "OpenClaw Installer ${{ steps.get_version.outputs.version }}"
+          draft: false
+          prerelease: false
+          body: |
+            ## OpenClaw Installer ${{ steps.get_version.outputs.version }}
+
+            Cross-platform GUI installer for OpenClaw -- no terminal required!
+
+            ### Downloads
+            | Platform | File | Notes |
+            |----------|------|-------|
+            | macOS (Apple Silicon) | `OpenClaw-Installer-*-arm64.dmg` | Requires macOS 12+ |
+            | macOS (Intel) | `OpenClaw-Installer-*-x64.dmg` | Requires macOS 12+ |
+            | Windows | `OpenClaw-Installer-Setup-*.exe` | Windows 10/11 x64 |
+            | Linux | `OpenClaw-Installer-*.AppImage` | Universal x64 |
+
+            ### Download URLs
+            ```
+            https://github.com/${{ github.repository }}/releases/download/${{ steps.get_version.outputs.version }}/OpenClaw-Installer-arm64.dmg
+            https://github.com/${{ github.repository }}/releases/download/${{ steps.get_version.outputs.version }}/OpenClaw-Installer-Setup.exe
+            https://github.com/${{ github.repository }}/releases/download/${{ steps.get_version.outputs.version }}/OpenClaw-Installer.AppImage
+            ```
+
+            ### What this installer does
+            1. Checks your Node.js version (installs guide if needed)
+            2. Installs OpenClaw globally via npm
+            3. Runs initial setup and daemon installation
+            4. Validates the installation with `openclaw doctor`
+
+  build:
+    needs: create-release
+    strategy:
+      matrix:
+        include:
+          - os: macos-14
+            platform: mac
+            build_cmd: pnpm build:mac
+            artifact_pattern: "dist/*.dmg"
+          - os: windows-latest
+            platform: win
+            build_cmd: pnpm build:win
+            artifact_pattern: "dist/*.exe"
+          - os: ubuntu-latest
+            platform: linux
+            build_cmd: pnpm build:linux
+            artifact_pattern: "dist/*.AppImage"
+
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: installer
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build installer (${{ matrix.platform }})
+        run: ${{ matrix.build_cmd }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # macOS code signing (optional - set these secrets to enable signing)
+          CSC_LINK: ${{ secrets.MAC_CERTS }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+      - name: Make AppImage executable (Linux only)
+        if: matrix.platform == 'linux'
+        run: chmod +x dist/*.AppImage
+
+      - name: Upload artifacts to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.create-release.outputs.version }}
+          files: installer/${{ matrix.artifact_pattern }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

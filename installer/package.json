@@ -1,0 +1,26 @@
+{
+  "name": "openclaw-installer",
+  "version": "1.0.0",
+  "description": "GUI installer for GISTechnician",
+  "author": "GISTechnician",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jjestrada2/AI-GIS-Technician.git"
+  },
+  "main": "src/main.js",
+  "scripts": {
+    "build": "electron-builder",
+    "build:all": "electron-builder --mac --win --linux",
+    "build:linux": "electron-builder --linux --x64",
+    "build:mac": "electron-builder --mac --arm64 --x64",
+    "build:win": "electron-builder --win --x64",
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "extends": "./electron-builder.yml"
+  }
+}
