@@ -1247,8 +1247,7 @@ export const en: TranslationMap = {
           "Reopen the served dashboard with openclaw dashboard so the UI and Gateway come from the same install.",
         stepDevUi:
           "If using pnpm ui:dev, rebuild or restart the dev UI against the current checkout.",
-        stepRestart:
-          "Restart the Gateway after updating OpenClaw so it serves the current protocol.",
+        stepRestart: "Restart the Gateway after updating GIST so it serves the current protocol.",
       },
       network: {
         title: "Could not connect",

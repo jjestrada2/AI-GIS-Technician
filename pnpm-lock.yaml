@@ -1913,6 +1913,9 @@ importers:
       json5:
         specifier: 2.2.3
         version: 2.2.3
+      leaflet:
+        specifier: ^1.9.4
+        version: 1.9.4
       lit:
         specifier: 3.3.3
         version: 3.3.3
@@ -5546,6 +5549,9 @@ packages:
   kysely@0.29.2:
     resolution: {integrity: sha512-s6WVJyEZrbm6jhBpiKHsGHyePMrVQKJ85wZCFCr9W4QHv6WTjWIrdvTmO9hDEA3bNK0xkrE2DqrHsXMLWuZpQg==}
     engines: {node: '>=22.0.0'}
+
+  leaflet@1.9.4:
+    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
 
   libopus-wasm@0.2.0:
     resolution: {integrity: sha512-x/2Gu1/C6L3IICY09zyfp984AWiOYjn53u4WfdY3yh+3KTzMN8Xkm77q3lenWMVIk5SnSzjGEkQT+VQMFHLBHQ==}
@@ -11155,6 +11161,8 @@ snapshots:
   klona@2.0.6: {}
 
   kysely@0.29.2: {}
+
+  leaflet@1.9.4: {}
 
   libopus-wasm@0.2.0: {}
 
